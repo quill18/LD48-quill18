@@ -10,8 +10,11 @@ public class QuestContainer : MonoBehaviour
     }
 
     private void OnDestroy() {
-        GameManager.Instance.onNewShift -= NewShift;
-        GameManager.Instance.onNewLevel -= NewLevel;        
+        if(GameManager.Instance != null)
+        {
+            GameManager.Instance.onNewShift -= NewShift;
+            GameManager.Instance.onNewLevel -= NewLevel;
+        }        
     }
 
     // Start is called before the first frame update

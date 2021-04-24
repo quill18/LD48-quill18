@@ -9,9 +9,9 @@ public class CardGO : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
     // Start is called before the first frame update
     void Start()
     {
-        txtTitle        = transform.Find("Title").GetComponent<TextMeshProUGUI>();
-        txtDescription  = transform.Find("Action Description").GetComponent<TextMeshProUGUI>();
-        txtSuits        = transform.Find("Suits").GetComponent<TextMeshProUGUI>();
+        txtTitle        = transform.Find("Frame/Title").GetComponent<TextMeshProUGUI>();
+        txtDescription  = transform.Find("Frame/Action Description").GetComponent<TextMeshProUGUI>();
+        txtSuits        = transform.Find("Frame/Suits").GetComponent<TextMeshProUGUI>();
 
 
         UpdateCardInfo();
@@ -52,8 +52,14 @@ public class CardGO : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
         // Can we afford this action?
 
         // Zhu-li, do the thing!
-        CardData.DoAction( this );
+        if( CardData.DoAction( this ) == false )
+        {
+            // Action didn't happen
+            return;
+        }
+        actionSpent = true;
         PlayerManager.Instance.CardPlayed(this);
+        UpdateCardInfo();
     }
 
     public void OnPointerEnter(PointerEventData pointerEventData)
@@ -79,7 +85,7 @@ public class CardGO : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
 
     }
 
-    void UpdateCardInfo()
+    public void UpdateCardInfo()
     {
         // Setup text etc... based on cardData
 
@@ -89,8 +95,8 @@ public class CardGO : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
             return;
         }
 
-        txtTitle.text = CardData.Name;
-        txtDescription.text = CardData.Description;
+        txtTitle.text = actionSpent ? "" : CardData.Name;
+        txtDescription.text = actionSpent ? "" : CardData.Description;
         txtSuits.text = CardData.GetSuitString(cachedSuits);
     }
 }

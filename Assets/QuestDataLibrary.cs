@@ -89,7 +89,7 @@ public static class QuestDataLibrary
             new SUIT[] { SUIT.Labour, SUIT.Science, SUIT.Power }
         );
         qd.isQuestBlocker = true;
-        SurfaceQuestData.Add(qd);
+        //SurfaceQuestData.Add(qd);
 
     }
 

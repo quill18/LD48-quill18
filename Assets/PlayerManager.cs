@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEngine.UI;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -20,6 +21,8 @@ public class PlayerManager : MonoBehaviour
     private void OnDestroy() {
         _Instance = null;
     }
+
+    public Color[] CardTints;
 
     static PlayerManager _Instance;
     public static PlayerManager Instance {
@@ -41,9 +44,10 @@ public class PlayerManager : MonoBehaviour
     List<CardData> playerDeck;  // The cards in a player's deck in total
     List<CardData> playerDrawDeck;
     List<CardData> playerDiscardDeck;
-    List<CardGO> playerHand;
+    public List<CardGO> playerHand;
 
     public GameObject CardGOPrefab;
+    public GameObject CardGOPrefabPower;
     public Transform  PlayerHandParent;
 
     int CardDrawAmount = 5;
@@ -52,6 +56,8 @@ public class PlayerManager : MonoBehaviour
 
     public delegate void PlayerHandCountChangedDelegate();
     public event PlayerHandCountChangedDelegate onPlayerHandCountChanged;
+    public event PlayerHandCountChangedDelegate onTotalSuitsChanged;
+
 
     public delegate void CardPlayedDelegate(CardGO cardGO);
     public event CardPlayedDelegate onCardPlayed;
@@ -178,7 +184,16 @@ public class PlayerManager : MonoBehaviour
             playerDrawDeck.RemoveAt(0);
 
             // Instantiate a new CardGO and link to the data
-            GameObject cardGO = Instantiate(CardGOPrefab, Vector3.zero, Quaternion.identity, PlayerHandParent);
+            GameObject pf = CardGOPrefab;
+            if(cd.suits[0] == SUIT.Power)
+                pf = CardGOPrefabPower; // use the power card art
+
+            GameObject cardGO = Instantiate(pf, PlayerHandParent);
+
+            //Image img = cardGO.transform.Find("Frame").GetComponent<Image>();
+            Image img = cardGO.transform.GetComponent<Image>();
+            img.color = CardTints[ (int)cd.suits[0] ];  // Tint the card frame based on icon.
+
             cardGO.GetComponent<CardGO>().CardData = cd;
             cardGO.GetComponent<CardGO>().UpdateCachedSuits();
             playerHand.Add(cardGO.GetComponent<CardGO>());
@@ -188,7 +203,7 @@ public class PlayerManager : MonoBehaviour
             onPlayerHandCountChanged();
     }
 
-    void UpdateTotalSuitsInHand()
+    public void UpdateTotalSuitsInHand()
     {
         //Debug.Log("UpdateTotalSuitsInHand");
         totalSuitsInHand = new Dictionary<SUIT, int>();
@@ -198,12 +213,16 @@ public class PlayerManager : MonoBehaviour
             foreach(SUIT s in c.cachedSuits)
             {
                 if(totalSuitsInHand.ContainsKey(s) == false)
-                    totalSuitsInHand[s] = 0;
+                {
+                    totalSuitsInHand.Add(s, 0);
+                }
 
                 totalSuitsInHand[s]++;
             }
         }
 
+        if(onTotalSuitsChanged != null)
+            onTotalSuitsChanged();
     }
 
     public bool CanCompleteQuest(QuestData questData, bool ignoreBlockers = false)

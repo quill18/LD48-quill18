@@ -34,21 +34,23 @@ public class CardData : CardBase
         return false;
     }
 
-    public void DoAction( CardGO cgo )
+    public bool DoAction( CardGO cgo )
     {
         // Run cost validator, exit if needed
         if(cardActionValidator != null && cardActionValidator(cgo) == false)
         {
-            return; // Can't afford
+            return false; // Can't afford
         }
 
-        if(cardAction != null)
+        if(cardAction == null)
         {
-            cardAction(cgo);
-        }
-        else
-        {
+            // We don't have an action
             Debug.Log("Card has no action.");
+            return false;
         }
+
+        cardAction(cgo);
+
+        return true;
     }
 }

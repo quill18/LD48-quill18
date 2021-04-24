@@ -45,12 +45,14 @@ public static class CardDataLibrary{
 
         cd = new CardData("Focus on Theory", "2MP: Change all Eng card suits to Sci", 
             new SUIT[] {SUIT.Engineering}, 
-            null, 
-            null );
+            (cgo) => { return PlayerManager.Instance.CurrentMana >= 2; }, 
+            (cgo) => { 
+                PlayerManager.Instance.CurrentMana -= 2; 
+                ChangeSuits(SUIT.Engineering, SUIT.Science); } );
         AllPlayerCards.Add( cd );
         //StartingPlayerCards.Add ( cd );
 
-        cd = new CardData("Basic Research", "1MP: Draw Card", 
+        cd = new CardData("Basic Research", "2MP: Draw Card", 
             new SUIT[] {SUIT.Science}, 
             (cgo) => { return PlayerManager.Instance.CurrentMana >= 1; }, 
             (cgo) => { 
@@ -72,10 +74,16 @@ public static class CardDataLibrary{
 
         cd = new CardData("Focus on the Practical", "2MP: Change all Sci card suits to Eng", 
             new SUIT[] {SUIT.Science}, 
-            null, 
-            null );
+            (cgo) => { return PlayerManager.Instance.CurrentMana >= 2; }, 
+            (cgo) => { 
+                PlayerManager.Instance.CurrentMana -= 2; 
+                ChangeSuits(SUIT.Science, SUIT.Engineering); } );
         AllPlayerCards.Add( cd );
-        //StartingPlayerCards.Add ( cd );
+        StartingPlayerCards.Add ( cd );
+        StartingPlayerCards.Add ( cd );
+        StartingPlayerCards.Add ( cd );
+        StartingPlayerCards.Add ( cd );
+        StartingPlayerCards.Add ( cd );
 
         cd = new CardData("Extended Shift", "Discard: Generate 1MP", 
             new SUIT[] {SUIT.Labour}, 
@@ -117,6 +125,25 @@ public static class CardDataLibrary{
 
         ///////////////////////////////////////////// Non-Starters
 
+    }
+
+    static void ChangeSuits(SUIT from, SUIT to)
+    {
+        // Loop through all cards in hand, replacing "from" suit with "to" suit
+        foreach(CardGO cardGO in PlayerManager.Instance.playerHand)
+        {
+            for(int i = 0; i < cardGO.cachedSuits.Length; i++)
+            {
+                if(cardGO.cachedSuits[i] == from)
+                {
+                    cardGO.cachedSuits[i] = to;
+                }
+
+                cardGO.UpdateCardInfo();
+            }
+        }
+
+        PlayerManager.Instance.UpdateTotalSuitsInHand();
     }
 
 }

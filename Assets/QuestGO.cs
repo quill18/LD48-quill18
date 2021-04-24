@@ -22,6 +22,7 @@ public class QuestGO : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler
         PlayerManager = GameObject.FindObjectOfType<PlayerManager>();
 
         PlayerManager.onPlayerHandCountChanged += UpdateCompletabilityness;
+        PlayerManager.onTotalSuitsChanged += UpdateCompletabilityness;
         UpdateCompletabilityness();
 
 
@@ -64,14 +65,13 @@ public class QuestGO : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler
 
     void UpdateCompletabilityness()
     {
-        //Debug.Log("UpdateCompletabilityness");
         if( PlayerManager.CanCompleteQuest(QuestData) )
         {
-            cardBackground.color = Color.green;
+            cardBackground.color = Color.white;
         }
         else
         {
-            cardBackground.color = Color.white;
+            cardBackground.color = new Color32(166, 166, 166, 255);
         }
     }
 
@@ -92,7 +92,7 @@ public class QuestGO : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler
 
     public void OnPointerClick(PointerEventData pointerEventData)
     {
-        Debug.Log("QuestGO " + gameObject.name + " was clicked.");
+        //Debug.Log("QuestGO " + gameObject.name + " was clicked.");
 
         if( PlayerManager.CanCompleteQuest(QuestData) == false )
         {

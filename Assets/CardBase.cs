@@ -6,7 +6,7 @@ public enum SUIT { Engineering, Science, Labour, Power, Wildcard };
 
 abstract public class CardBase
 {
-    readonly string[] SuitIcons = new string[] {"🔧", "🔬", "👨", "⚡", "*"};
+    readonly string[] SuitIcons = new string[] {"🔧", "💡", "👨", "⚡", "*"};
 
 
     public string Name { get; protected set; }
