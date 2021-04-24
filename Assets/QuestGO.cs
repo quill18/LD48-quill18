@@ -51,6 +51,7 @@ public class QuestGO : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler
         QuestData.DoExit(this);
 
         PlayerManager.onPlayerHandCountChanged -= UpdateCompletabilityness;
+        PlayerManager.onTotalSuitsChanged -= UpdateCompletabilityness;
 
         foreach(QuestGO questGO in GameObject.FindObjectsOfType<QuestGO>())
         {
@@ -67,11 +68,11 @@ public class QuestGO : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler
     {
         if( PlayerManager.CanCompleteQuest(QuestData) )
         {
-            cardBackground.color = Color.white;
+            cardBackground.color = Color.green;
         }
         else
         {
-            cardBackground.color = new Color32(166, 166, 166, 255);
+            cardBackground.color = Color.white; //new Color32(166, 166, 166, 255);
         }
     }
 
