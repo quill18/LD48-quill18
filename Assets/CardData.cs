@@ -2,50 +2,49 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum SUIT { Engineering, Science, HR, Wildcard };
-
-public class CardData
+public class CardData : CardBase
 {
-    public CardData(string name, string actionDescription, SUIT[] suits, CardActionDelegate cardActionDelegate)
+    public CardData(string name, string description, SUIT[] suits, CardActionValidatorDelegate cardActionValidator, CardActionDelegate cardAction)
     {
         this.Name = name;
-        this.ActionDescription = actionDescription;
+        this.Description = description;
         this.suits = suits;
-        this.cardActionDelegate = cardActionDelegate;
+        this.cardAction = cardAction;
+        this.cardActionValidator = cardActionValidator;
+
     }
 
-    public delegate void CardActionDelegate();
+    public delegate void CardActionDelegate( CardGO cgo );
+    CardActionDelegate cardAction;
 
-    CardActionDelegate cardActionDelegate;
+    public delegate bool CardActionValidatorDelegate( CardGO cgo );
+    CardActionValidatorDelegate cardActionValidator;
 
-    public string Name { get; private set; }
-    public string ActionDescription { get; private set; }
-
-    SUIT[] suits;
-
-    public int GetSuitCount( SUIT s )
+    public bool HasSuit( SUIT target, SUIT[] cachedSuits )
     {
-        // Return number of suits on this card that matchs s (including wildcards)
-        return 0;
-    }
+        if(cachedSuits == null)
+            cachedSuits = suits;
 
-    readonly string[] SuitIcons = new string[] {"🔧", "🔬", "H", "*"};
-
-    public string GetSuitString()
-    {
-        string s = "";
-        foreach(SUIT suit in suits)
+        foreach(SUIT s in cachedSuits )
         {
-            s += SuitIcons[(int)suit];
+            if(s == target)
+                return true;
         }
-        return s;
+
+        return false;
     }
 
-    public void DoAction()
+    public void DoAction( CardGO cgo )
     {
-        if(cardActionDelegate != null)
+        // Run cost validator, exit if needed
+        if(cardActionValidator != null && cardActionValidator(cgo) == false)
         {
-            cardActionDelegate();
+            return; // Can't afford
+        }
+
+        if(cardAction != null)
+        {
+            cardAction(cgo);
         }
         else
         {

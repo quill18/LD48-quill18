@@ -8,24 +8,20 @@ public class OverlappedVerticalLayout : MonoBehaviour
     void Start()
     {
         rectTransform = GetComponent<RectTransform>();
+
+        PlayerManager.Instance.onPlayerHandCountChanged += UpdateCardPositions;
     }
 
     RectTransform rectTransform;
 
     float padding = 8;
 
-    int lastNumChildcount = -1;
 
     // Update is called once per frame
     void Update() {
-        if(transform.childCount != lastNumChildcount)
-        {
-            lastNumChildcount = transform.childCount;
-            UpdateCardPositions();
-        }
     }
 
-    void UpdateCardPositions()
+    public void UpdateCardPositions()
     {
         int numChildren = transform.childCount;
 
@@ -49,7 +45,7 @@ public class OverlappedVerticalLayout : MonoBehaviour
 
     void NoOverlap(int numChildren, float childHeight)
     {
-        Debug.Log("NoOverlap");
+        //Debug.Log("NoOverlap");
         for(int i = 0; i < transform.childCount; i++)
         {
             Transform c = transform.GetChild(i);
@@ -63,7 +59,7 @@ public class OverlappedVerticalLayout : MonoBehaviour
 
     void WithOverlap(int numChildren, float childHeight)
     {
-        Debug.Log("WithOverlap");
+        //Debug.Log("WithOverlap");
 
         float overlappedChildHeight = (rectTransform.rect.height - childHeight) / (numChildren-1);
 
