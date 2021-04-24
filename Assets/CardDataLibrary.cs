@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class CardDataInitializer{
+public static class CardDataLibrary{
 
     public static List<CardData> AllPlayerCards;
     public static List<CardData> StartingPlayerCards;

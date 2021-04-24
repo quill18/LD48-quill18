@@ -2,13 +2,26 @@
 
 public class QuestData 
 {
-    string name;
-    string description; // Explain any ongoing / failure / success effects
+    public QuestData(string name, string description, SUIT[] suits, int maxTurns = -1, QuestEventDelegate onSuccess=null, QuestEventDelegate onFail=null)
+    {
+        this.Name = name;
+        this.Description = description;
+        this.baseCost = suits;
+        this.MaxTurns = maxTurns;
 
-    public delegate void QuestEventDelegate();
+        this.onSuccess += onSuccess;
+        this.onFail += onFail;
+    }
 
-    QuestEventDelegate onSuccess;
-    QuestEventDelegate onFail;      // i.e. timed out
+    public string Name {get; private set;}
+    public string Description {get; private set;} // Explain any ongoing / failure / success effects
+
+    public int MaxTurns {get; private set;}
+
+    public delegate void QuestEventDelegate(QuestGO questGO);
+
+    event QuestEventDelegate onSuccess;
+    event QuestEventDelegate onFail;      // i.e. timed out
 
     public delegate SUIT[] ModifyQuestCostDelegate(SUIT[] suits);
     ModifyQuestCostDelegate costModifier;
@@ -54,5 +67,21 @@ public class QuestData
     public SUIT[] GetCurrentCost()
     {
         return currentCost;
+    }
+
+    public void DoFail(QuestGO questGO)
+    {
+        if(onFail != null)
+        {
+            onFail(questGO);
+        }
+    }
+
+    public void DoSuccess(QuestGO questGO)
+    {
+        if(onSuccess != null)
+        {
+            onSuccess(questGO);
+        }
     }
 }

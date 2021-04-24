@@ -8,8 +8,8 @@ public class PlayerManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        CardDataInitializer.Initialize();
-        playerDeck = CardDataInitializer.StartingPlayerCards;
+        CardDataLibrary.Initialize();
+        playerDeck = CardDataLibrary.StartingPlayerCards;
 
         ResetPlayer();
         NewTurn();
