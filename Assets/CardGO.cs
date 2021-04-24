@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using TMPro;
 
-public class CardGO : MonoBehaviour, IPointerClickHandler
+public class CardGO : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
     // Start is called before the first frame update
     void Start()
@@ -20,9 +20,34 @@ public class CardGO : MonoBehaviour, IPointerClickHandler
     TextMeshProUGUI txtDescription;
     TextMeshProUGUI txtSuits;   // Is text?!?  Assuming we can do everything with unicode
 
+    int origSiblingIndex=-1;
+
     public void OnPointerClick(PointerEventData pointerEventData)
     {
         Debug.Log("CardGO " + gameObject.name + " was clicked.");
+    }
+
+    public void OnPointerEnter(PointerEventData pointerEventData)
+    {
+        // TODO: Offset the card slightly?  Embiggen it?
+        origSiblingIndex = transform.GetSiblingIndex();
+        transform.SetSiblingIndex( transform.parent.childCount - 1 );
+        transform.position = new Vector3(
+            16,
+            transform.position.y,
+            transform.position.z
+        );
+    }
+
+    public void OnPointerExit(PointerEventData pointerEventData)
+    {
+        transform.SetSiblingIndex( origSiblingIndex );
+        transform.position = new Vector3(
+            0,
+            transform.position.y,
+            transform.position.z
+        );
+
     }
 
     // Update is called once per frame
@@ -32,7 +57,7 @@ public class CardGO : MonoBehaviour, IPointerClickHandler
 
         if(CardData == null)
         {
-            Debug.LogError("CardGO " + gameObject.name + " has null card data.");
+//            Debug.LogError("CardGO " + gameObject.name + " has null card data.");
             return;
         }
 

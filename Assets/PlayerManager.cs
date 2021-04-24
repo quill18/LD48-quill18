@@ -8,7 +8,11 @@ public class PlayerManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        CardDataInitializer.Initialize();
+        playerDeck = CardDataInitializer.StartingPlayerCards;
+
         ResetPlayer();
+        NewTurn();
     }
 
     [System.NonSerialized]
@@ -35,6 +39,7 @@ public class PlayerManager : MonoBehaviour
         CurrentMana = MaxMana;
         playerDrawDeck = playerDeck.ToList();
         playerDiscardDeck = new List<CardData>();
+        playerHand = new List<CardGO>();
     }
 
     void NewTurn()
@@ -71,9 +76,8 @@ public class PlayerManager : MonoBehaviour
             playerDrawDeck.RemoveAt(0);
 
             // Instantiate a new CardGO and link to the data
-            GameObject cardGO = Instantiate(CardGOPrefab);
+            GameObject cardGO = Instantiate(CardGOPrefab, Vector3.zero, Quaternion.identity, PlayerHandParent);
             cardGO.GetComponent<CardGO>().CardData = cd;
-            cardGO.transform.SetParent(PlayerHandParent);
             playerHand.Add(cardGO.GetComponent<CardGO>());
         }
     }
