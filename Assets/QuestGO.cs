@@ -68,6 +68,9 @@ public class QuestGO : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler
 
     public bool QuestIsStackBlocked(  )
     {
+        if(PlayerManager.Instance.IgnoreNextBlocker > 0)
+            return false;
+
         if( this.transform.GetComponentInParent<QuestContainer>().QuestClass == QuestContainer.QUESTCLASS.SURFACE )
         {
             return false;
@@ -123,9 +126,17 @@ public class QuestGO : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler
             return;
         }
 
-        QuestData.DoSuccess( this );
+        ForceCompleteQuest();
+    }
+
+    public void ForceCompleteQuest(bool ignorePowerCost = false)
+    {
+        QuestData.DoSuccess( this, ignorePowerCost );
+
+        PlayerManager.Instance.IgnoreNextBlocker = 0;
 
         Destroy(gameObject);
+
     }
 
     public void OnPointerEnter(PointerEventData pointerEventData)

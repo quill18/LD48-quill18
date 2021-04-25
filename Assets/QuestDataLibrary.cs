@@ -442,7 +442,7 @@ public static class QuestDataLibrary
         qd = new QuestData(
             1,
             "Human Virus",
-            "-1 Manpower per shift.",
+            "-1 Workforce per shift.",
             new SUIT[] { SUIT.Labour }
         );
         qd.onEnter += (cardGO) => { PlayerManager.Instance.MaxMana--; };
@@ -464,7 +464,7 @@ public static class QuestDataLibrary
         qd = new QuestData(
             3,
             "Coffee Break",
-            "-1 Manpower per Shift, but gain 5 morale when completed",
+            "-1 Workforce per Shift, but gain 5 morale when completed",
             new SUIT[] { SUIT.Labour, SUIT.Labour }
         );
         qd.onEnter += (cardGO) => { PlayerManager.Instance.MaxMana++; };
@@ -535,7 +535,7 @@ public static class QuestDataLibrary
         qd = new QuestData(
             5,
             "Internet Outage",
-            "Lose 5 morale per shift, but gain 1 manpower per shift.",
+            "Lose 5 morale per shift, but gain 1 Workforce per shift.",
             new SUIT[] { SUIT.Engineering, SUIT.Engineering }
         );
         qd.onEnter += (cardGO) => { PlayerManager.Instance.MaxMana++; };
@@ -560,7 +560,7 @@ public static class QuestDataLibrary
         qd = new QuestData(
             6,
             "Karaoke Night",
-            "-1 Manpower per shift, but gain 10 Morale when resolved.",
+            "-1 Workforce per shift, but gain 10 Morale when resolved.",
             new SUIT[] { SUIT.Labour, SUIT.Power, SUIT.Power }
         );
         qd.onEnter += (cardGO) => { PlayerManager.Instance.MaxMana--; };
@@ -584,7 +584,7 @@ public static class QuestDataLibrary
         qd = new QuestData(
             8,
             "Mandatory Meetings",
-            "Maximum Manpower is reduced by one.",
+            "Maximum Workforce is reduced by one.",
             new SUIT[] { SUIT.Science, SUIT.Engineering, SUIT.Labour }
         );
         qd.onEnter += (cardGO) => { PlayerManager.Instance.MaxMana--; };

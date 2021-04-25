@@ -19,12 +19,12 @@ public class CardGO : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
 
     public void UpdateCachedSuits()
     {
-        cachedSuits = new List<SUIT>(CardData.suits).ToArray();
+        cachedSuits = new List<SUIT>(CardData.suits);
     }
 
     public CardData CardData;
 
-    public SUIT[] cachedSuits;
+    public List<SUIT> cachedSuits;
 
     TextMeshProUGUI txtTitle;
     TextMeshProUGUI txtDescription;
@@ -32,7 +32,9 @@ public class CardGO : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
 
     int origSiblingIndex=-1;
 
-    bool actionSpent = false;
+    public bool ActionSpent {get; protected set;} = false;
+
+    public bool IsTemporary = false;
 
     public void Discard()
     {
@@ -43,7 +45,7 @@ public class CardGO : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
     {
         Debug.Log("CardGO " + gameObject.name + " was clicked.");
 
-        if(actionSpent == true)
+        if(ActionSpent == true)
         {
             Debug.Log("Already spent!");
             return;
@@ -57,7 +59,7 @@ public class CardGO : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
             // Action didn't happen
             return;
         }
-        actionSpent = true;
+        ActionSpent = true;
         PlayerManager.Instance.CardPlayed(this);
         UpdateCardInfo();
     }
@@ -103,8 +105,8 @@ public class CardGO : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
             return;
         }
 
-        txtTitle.text = actionSpent ? "" : CardData.Name;
-        txtDescription.text = actionSpent ? "" : CardData.Description;
-        txtSuits.text = CardData.GetSuitString(cachedSuits);
+        txtTitle.text = ActionSpent ? "USED" : CardData.Name;
+        txtDescription.text = ActionSpent ? "USED" : CardData.Description + ( IsTemporary ? " *Temporary*" : "" );
+        txtSuits.text = CardData.GetSuitString(cachedSuits.ToArray());
     }
 }

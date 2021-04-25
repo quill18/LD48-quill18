@@ -87,7 +87,7 @@ public class QuestData : CardBase
         }
     }
 
-    public void DoSuccess(QuestGO questGO)
+    public void DoSuccess(QuestGO questGO, bool ignorePowerCost = false)
     {
         if(onSuccess != null)
         {
@@ -95,11 +95,14 @@ public class QuestData : CardBase
         }
 
         // Remove any power we used.
-        foreach(SUIT s in PlayerManager.Instance.ModifiedSuitCost(suits))
+        if(ignorePowerCost == false)
         {
-            if(s == SUIT.Power)
+            foreach(SUIT s in PlayerManager.Instance.ModifiedSuitCost(suits))
             {
-                PlayerManager.Instance.DiscardOneWithSuit( s );
+                if(s == SUIT.Power)
+                {
+                    PlayerManager.Instance.DiscardOneWithSuit( s );
+                }
             }
         }
 

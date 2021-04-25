@@ -4,18 +4,23 @@ using UnityEngine;
 
 public class CardData : CardBase
 {
-    public CardData(string name, string description, SUIT[] suits, CardActionValidatorDelegate cardActionValidator, CardActionDelegate cardAction)
+    public CardData(int level, string name, string description, SUIT[] suits, CardActionValidatorDelegate cardActionValidator, CardActionDelegate cardAction)
     {
+        this.Level = level;
         this.Name = name;
         this.Description = description;
         this.suits = suits;
         this.cardAction = cardAction;
         this.cardActionValidator = cardActionValidator;
-
     }
+
+    public int Level { get; protected set; }
 
     public delegate void CardActionDelegate( CardGO cgo );
     CardActionDelegate cardAction;
+
+    public CardActionDelegate otherCardPlayed;
+    public CardActionDelegate otherCardDiscarded;
 
     public delegate bool CardActionValidatorDelegate( CardGO cgo );
     CardActionValidatorDelegate cardActionValidator;

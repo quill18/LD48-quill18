@@ -16,6 +16,6 @@ public class UIManpowerText : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        text.text = "Manpower: " + PlayerManager.Instance.CurrentMana.ToString() + "/" + PlayerManager.Instance.MaxMana.ToString();
+        text.text = "Workforce: " + PlayerManager.Instance.CurrentMana.ToString() + "/" + PlayerManager.Instance.MaxMana.ToString();
     }
 }

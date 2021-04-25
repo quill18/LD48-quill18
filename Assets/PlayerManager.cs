@@ -57,6 +57,8 @@ public class PlayerManager : MonoBehaviour
 
     public int CardDrawAmount = 5;
 
+    public int IgnoreNextBlocker = 0;
+
     List<SUIT> extraSuitCost;   // An extra cost for all quests
 
     Dictionary<SUIT, int> totalSuitsInHand;
@@ -100,6 +102,18 @@ public class PlayerManager : MonoBehaviour
         if(onCardPlayed != null)
         {
             onCardPlayed(cardGO);
+        }
+
+        // Loop through other cards in hand
+        foreach(CardGO c in playerHand)
+        {
+            if(c != cardGO)
+            {
+                if(c.CardData.otherCardPlayed != null)
+                {
+                    c.CardData.otherCardPlayed(cardGO);
+                }
+            }
         }
     }
 
@@ -147,27 +161,47 @@ public class PlayerManager : MonoBehaviour
 
     }
 
-    void DiscardHand()
+    public void DiscardHand()
     {
         while(playerHand.Count > 0)
         {
-            DiscardAt(0);
+            DiscardAt(0, true);
         }
 
         Debug.Log("DiscardHand - Deck: " + playerDrawDeck.Count + " Discard: " + playerDiscardDeck.Count);
     }
 
-    void DiscardAt(int num)
+    void DiscardAt(int num, bool discardingHand = false)
     {
-        CardGO cardgo = playerHand[num];
+        CardGO cardGO = playerHand[num];
         playerHand.RemoveAt(num);
-        playerDiscardDeck.Add(cardgo.CardData);
 
-        cardgo.transform.SetParent(null); // Become Batman
-        Destroy(cardgo.gameObject);
+        if(cardGO.IsTemporary == false)
+        {
+            playerDiscardDeck.Add(cardGO.CardData);
+        }
+
+        cardGO.transform.SetParent(null); // Become Batman
+        Destroy(cardGO.gameObject);
 
         if(onPlayerHandCountChanged != null)
             onPlayerHandCountChanged();
+
+        if(discardingHand == false)
+        {
+            // Loop through other cards in hand
+            foreach(CardGO c in playerHand)
+            {
+                if(c != cardGO)
+                {
+                    if(c.CardData.otherCardDiscarded != null)
+                    {
+                        c.CardData.otherCardDiscarded(cardGO);
+                    }
+                }
+            }
+        }
+            
     }
 
     public void Discard(CardGO cgo)
@@ -186,13 +220,41 @@ public class PlayerManager : MonoBehaviour
     {
         for(int i = 0; i < playerHand.Count; i++)
         {
-            if(playerHand[i].CardData.HasSuit(s, playerHand[i].cachedSuits))
+            if(playerHand[i].CardData.HasSuit(s, playerHand[i].cachedSuits.ToArray()))
             {
                 DiscardAt(i);
                 return;
             }
         }
 
+    }
+
+    public void CreateTemporaryCard(CardData cd)
+    {
+        if(PlayerHandParent.transform.childCount >= 10)
+        {
+            Debug.Log("Hand is full!");
+            return;
+        }
+
+        // Instantiate a new CardGO and link to the data
+        GameObject pf = CardGOPrefab;
+        if(cd.suits[0] == SUIT.Power)
+            pf = CardGOPrefabPower; // use the power card art
+
+        GameObject cardGO = Instantiate(pf, PlayerHandParent);
+
+        cardGO.GetComponent<CardGO>().IsTemporary = true;
+
+        Image img = cardGO.GetComponent<Image>();
+        img.color = CardTints[ (int)cd.suits[0] ];  // Tint the card frame based on icon.
+
+        cardGO.GetComponent<CardGO>().CardData = cd;
+        cardGO.GetComponent<CardGO>().UpdateCachedSuits();
+        playerHand.Add(cardGO.GetComponent<CardGO>());
+
+        if(onPlayerHandCountChanged != null)
+            onPlayerHandCountChanged();
     }
 
     public void DrawCards( int num )
@@ -242,6 +304,13 @@ public class PlayerManager : MonoBehaviour
             onPlayerHandCountChanged();
     }
 
+    public void TakeQuestOverflowDamage()
+    {
+        // TODO: Visual damage indicator
+
+        CurrentHitpoints -= GameManager.Instance.CurrentLevel;
+    }
+
     public void UpdateTotalSuitsInHand()
     {
         //Debug.Log("UpdateTotalSuitsInHand");
@@ -266,6 +335,11 @@ public class PlayerManager : MonoBehaviour
 
     public bool QuestIsBlocked(QuestData questData)
     {
+        if(IgnoreNextBlocker > 0)
+        {
+            return false;
+        }
+
         // If this quest is not a blocker, but there is a blocker quest in play, return false.
         if(questData.isQuestBlocker == true)
         {

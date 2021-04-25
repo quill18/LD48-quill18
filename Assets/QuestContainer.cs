@@ -77,6 +77,7 @@ public class QuestContainer : MonoBehaviour
         if(transform.childCount >= maxQuests)
         {
             Debug.Log("Full on quests.");
+            PlayerManager.Instance.TakeQuestOverflowDamage();
             return;
         }
 
