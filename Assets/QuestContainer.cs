@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class QuestContainer : MonoBehaviour
 {
@@ -28,7 +29,7 @@ public class QuestContainer : MonoBehaviour
         }
         else
         {
-            myQuestPool = QuestDataLibrary.DrillQuestData;
+            //myQuestPool = QuestDataLibrary.DrillQuestData;
         }
     }
 
@@ -54,6 +55,11 @@ public class QuestContainer : MonoBehaviour
 
     void NewLevel()
     {
+        if(QuestClass == QUESTCLASS.DRILL)
+        {
+            myQuestPool = QuestDataLibrary.GetDrillQuestsForLevel(GameManager.Instance.CurrentLevel);
+        }
+
         for(int i = 0; i < NumQuestsNewLevel; i++)
         {
             AddQuest();
@@ -66,7 +72,7 @@ public class QuestContainer : MonoBehaviour
         
     }
 
-    void AddQuest()
+    public void AddQuest()
     {
         if(transform.childCount >= maxQuests)
         {
@@ -74,7 +80,20 @@ public class QuestContainer : MonoBehaviour
             return;
         }
 
-        QuestData qd = myQuestPool[ Random.Range(0, myQuestPool.Count) ];
+        QuestData qd;
+        
+        if(QuestClass == QUESTCLASS.SURFACE)
+        {
+            List<QuestData> filteredQuests = myQuestPool.Where( 
+                (qd) => { return qd.Level <= GameManager.Instance.CurrentLevel; }  
+                ).ToList();
+            qd = filteredQuests[ Random.Range(0, filteredQuests.Count) ];
+        }
+        else
+        {
+            qd = myQuestPool[0];
+            myQuestPool.RemoveAt(0);
+        }
 
         QuestGO questGO = Instantiate(QuestGOPrefab, this.transform).GetComponent<QuestGO>();
         if(questGO == null)

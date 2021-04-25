@@ -24,6 +24,7 @@ public class OverlappedVerticalLayout : MonoBehaviour
     public void UpdateCardPositions()
     {
         int numChildren = transform.childCount;
+        //Debug.Log("UpdateCardPositions: " + numChildren);
 
         if(numChildren == 0)
             return;
@@ -66,11 +67,13 @@ public class OverlappedVerticalLayout : MonoBehaviour
         for(int i = 0; i < numChildren; i++)
         {
             Transform c = transform.GetChild(i);
+            c.GetComponent<CardGO>()?.StopHover();
             c.localPosition = new Vector3(
                 0,
                 overlappedChildHeight * ( -numChildren/2.0f + (numChildren - i - 1) ) + overlappedChildHeight/2.0f,
                 0
             );
+            //Debug.Log(c.localPosition.y);
         }
 
     }

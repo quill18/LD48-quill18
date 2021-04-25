@@ -37,6 +37,8 @@ public class QuestGO : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler
         QuestData.DoEnter(this);
     }
 
+    public Image ChainImage;
+
     public QuestData QuestData;
     int turnsLeft;
 
@@ -64,9 +66,28 @@ public class QuestGO : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler
     {
     }
 
+    public bool QuestIsStackBlocked(  )
+    {
+        if( this.transform.GetComponentInParent<QuestContainer>().QuestClass == QuestContainer.QUESTCLASS.SURFACE )
+        {
+            return false;
+        }
+
+        // This is the Drill stack, so is questGO at the top?
+
+        if( this.transform.GetSiblingIndex() == 0 )
+        {
+            // Quest is at the top.
+            return false;
+        }
+
+        return true;
+    }
+
+
     void UpdateCompletabilityness()
     {
-        if( PlayerManager.CanCompleteQuest(QuestData) )
+        if( PlayerManager.CanCompleteQuest(this, true) )
         {
             cardBackground.color = Color.green;
         }
@@ -74,6 +95,8 @@ public class QuestGO : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler
         {
             cardBackground.color = Color.white; //new Color32(166, 166, 166, 255);
         }
+
+        ChainImage.enabled = PlayerManager.QuestIsBlocked(QuestData) || QuestIsStackBlocked();
     }
 
     void UpdateCardInfo()
@@ -95,7 +118,7 @@ public class QuestGO : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler
     {
         //Debug.Log("QuestGO " + gameObject.name + " was clicked.");
 
-        if( PlayerManager.CanCompleteQuest(QuestData) == false )
+        if( PlayerManager.CanCompleteQuest(this) == false )
         {
             return;
         }

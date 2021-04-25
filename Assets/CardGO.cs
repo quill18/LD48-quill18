@@ -76,7 +76,15 @@ public class CardGO : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
 
     public void OnPointerExit(PointerEventData pointerEventData)
     {
+        StopHover();
+    }
+
+    public void StopHover()
+    {
+        if(origSiblingIndex < 0)
+            return;
         transform.SetSiblingIndex( origSiblingIndex );
+        origSiblingIndex = -1;
         transform.position = new Vector3(
             0,
             transform.position.y,

@@ -52,7 +52,7 @@ public static class CardDataLibrary{
         AllPlayerCards.Add( cd );
         //StartingPlayerCards.Add ( cd );
 
-        cd = new CardData("Basic Research", "2MP: Draw Card", 
+        cd = new CardData("Basic Research", "1MP: Draw Card", 
             new SUIT[] {SUIT.Science}, 
             (cgo) => { return PlayerManager.Instance.CurrentMana >= 1; }, 
             (cgo) => { 

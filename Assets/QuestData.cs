@@ -2,8 +2,10 @@
 
 public class QuestData : CardBase
 {
-    public QuestData(string name, string description, SUIT[] suits, int maxTurns = -1)
+    public QuestData(int level, string name, string description, SUIT[] suits, int maxTurns = -1)
     {
+        this.Level = level;
+        
         this.Name = name;
         this.Description = description;
         this.baseCost = suits;
@@ -12,6 +14,8 @@ public class QuestData : CardBase
         this.suits = suits;
 
     }
+
+    public int Level {get; private set;}
 
     public int MaxTurns {get; private set;}
 
@@ -33,21 +37,6 @@ public class QuestData : CardBase
     // Need a delegate that other quests call to see if their completability is affected by this ongoing
 
     public bool isQuestBlocker = false; // This prevents other quests from being completed
-
-    public bool IsBlocked( /* ref to player hand, ref to other active quests */ ) 
-    {
-        // Check other active quests for ongoing effects that modify/forbid this
-        // For example, calculate a current cost (different from base suits)
-
-        if(isQuestBlocker == false)
-        {
-            // Check if any other quest is a blocker, and if so return false
-
-            // Note that if we are a blocker, we are always completable because this check is skipped
-        }
-
-        return false;
-    }
 
     public void UpdateCurrentCost( QuestData[] quests )
     {
@@ -106,7 +95,7 @@ public class QuestData : CardBase
         }
 
         // Remove any power we used.
-        foreach(SUIT s in suits)
+        foreach(SUIT s in PlayerManager.Instance.ModifiedSuitCost(suits))
         {
             if(s == SUIT.Power)
             {

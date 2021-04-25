@@ -6,6 +6,11 @@ using UnityEngine.UI;
 
 public class PlayerManager : MonoBehaviour
 {
+
+    private void Awake() {
+        extraSuitCost = new List<SUIT>();
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -50,7 +55,9 @@ public class PlayerManager : MonoBehaviour
     public GameObject CardGOPrefabPower;
     public Transform  PlayerHandParent;
 
-    int CardDrawAmount = 5;
+    public int CardDrawAmount = 5;
+
+    List<SUIT> extraSuitCost;   // An extra cost for all quests
 
     Dictionary<SUIT, int> totalSuitsInHand;
 
@@ -61,6 +68,32 @@ public class PlayerManager : MonoBehaviour
 
     public delegate void CardPlayedDelegate(CardGO cardGO);
     public event CardPlayedDelegate onCardPlayed;
+
+    public void AddExtraSuit( SUIT s )
+    {
+        extraSuitCost.Add(s);
+        if(onTotalSuitsChanged != null)
+            onTotalSuitsChanged();
+    }
+
+    public void RemoveExtraSuit( SUIT s )
+    {
+        for(int i = 0; i < extraSuitCost.Count; i++)
+        {
+            if(extraSuitCost[i] == s)
+            {
+                extraSuitCost.RemoveAt(i);
+                return;
+            }
+        }
+        if(onTotalSuitsChanged != null)
+            onTotalSuitsChanged();
+    }
+
+    public SUIT[] ModifiedSuitCost( SUIT[] cardCost )
+    {
+        return extraSuitCost.Concat(cardCost).ToArray();
+    }
 
     public void CardPlayed(CardGO cardGO)
     {
@@ -166,6 +199,12 @@ public class PlayerManager : MonoBehaviour
     {
         for(int i = 0; i < num; i++)
         {
+            if(PlayerHandParent.transform.childCount >= 10)
+            {
+                Debug.Log("Hand is full!");
+                return;
+            }
+
             if(playerDrawDeck.Count <= 0)
             {
                 ShuffleDiscardIntoDrawDeck();
@@ -225,17 +264,46 @@ public class PlayerManager : MonoBehaviour
             onTotalSuitsChanged();
     }
 
-    public bool CanCompleteQuest(QuestData questData, bool ignoreBlockers = false)
+    public bool QuestIsBlocked(QuestData questData)
     {
+        // If this quest is not a blocker, but there is a blocker quest in play, return false.
+        if(questData.isQuestBlocker == true)
+        {
+            return false; // Blockers can't be blocked
+        }
+
+        QuestGO[] qgos = GameObject.FindObjectsOfType<QuestGO>();
+        foreach(QuestGO qgo in qgos)
+        {
+            QuestData qd = qgo.QuestData;
+            if(qd.isQuestBlocker == true)
+            {
+                return true;   // cannot complete this quest due to a blocker
+            }
+        }
+
+        return false;
+    }
+
+    public bool CanCompleteQuest(QuestGO questGO, bool ignoreBlockers = false)
+    {
+        QuestData questData = questGO.QuestData;
+
         Dictionary<SUIT, int> suitsRequired = new Dictionary<SUIT, int>();
 
         // If this quest is not a blocker, but there is a blocker quest in play, return false.
         if(ignoreBlockers == false && questData.isQuestBlocker == false)
         {
-            // TODO: Loop through all the quests to find blockers
+            if( questGO.QuestIsStackBlocked() )
+            {
+                return false;  // We are stack blocked, can't complete
+            }
+
+            // Loop through all the quests to find blockers
             QuestGO[] qgos = GameObject.FindObjectsOfType<QuestGO>();
             foreach(QuestGO qgo in qgos)
             {
+
                 QuestData qd = qgo.QuestData;
                 if(qd.isQuestBlocker == true)
                 {
@@ -244,7 +312,7 @@ public class PlayerManager : MonoBehaviour
             }
         }
 
-        foreach(SUIT s in questData.suits)
+        foreach(SUIT s in ModifiedSuitCost(questData.suits))
         {
             if(suitsRequired.ContainsKey(s) == false)
                 suitsRequired[s] = 0;

@@ -41,6 +41,11 @@ public class GameManager : MonoBehaviour
         
     }
 
+    public void AddNewSurfaceQuest()
+    {
+        SurfaceQuestContainer.AddQuest();
+    }
+
     public void QuestWasCompleted()
     {
         // Update the drill graphic
@@ -66,7 +71,7 @@ public class GameManager : MonoBehaviour
     public void EndShift()
     {
         Debug.Log("End Shift");
-
+        
         PlayerManager.Instance.NewTurn();
 
         QuestGO[] qgos = GameObject.FindObjectsOfType<QuestGO>();
@@ -80,6 +85,7 @@ public class GameManager : MonoBehaviour
 
         if(onNewShift!= null)
             onNewShift();
+
     }
 
 
