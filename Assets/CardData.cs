@@ -25,6 +25,8 @@ public class CardData : CardBase
     public delegate bool CardActionValidatorDelegate( CardGO cgo );
     CardActionValidatorDelegate cardActionValidator;
 
+    public bool IsRetained = false; // Doesn't get discarded at end of shift
+
     public bool HasSuit( SUIT target, SUIT[] cachedSuits )
     {
         if(cachedSuits == null)

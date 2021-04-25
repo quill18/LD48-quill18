@@ -13,7 +13,6 @@ public class CardGO : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
         txtDescription  = transform.Find("Frame/Action Description").GetComponent<TextMeshProUGUI>();
         txtSuits        = transform.Find("Frame/Suits").GetComponent<TextMeshProUGUI>();
 
-
         UpdateCardInfo();
     }
 
@@ -35,6 +34,7 @@ public class CardGO : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
     public bool ActionSpent {get; protected set;} = false;
 
     public bool IsTemporary = false;
+
 
     public void Discard()
     {

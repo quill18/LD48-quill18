@@ -60,6 +60,7 @@ public class PlayerManager : MonoBehaviour
     public int IgnoreNextBlocker = 0;
 
     List<SUIT> extraSuitCost;   // An extra cost for all quests
+    List<SUIT> suitDiscount;   // An extra cost for all quests
 
     Dictionary<SUIT, int> totalSuitsInHand;
 
@@ -94,7 +95,14 @@ public class PlayerManager : MonoBehaviour
 
     public SUIT[] ModifiedSuitCost( SUIT[] cardCost )
     {
-        return extraSuitCost.Concat(cardCost).ToArray();
+        List<SUIT> modSuits = extraSuitCost.Concat(cardCost).ToList();
+
+        /*foreach(SUIT d in suitDiscount)
+        {
+
+        }*/
+
+        return modSuits.ToArray();
     }
 
     public void CardPlayed(CardGO cardGO)
@@ -153,7 +161,7 @@ public class PlayerManager : MonoBehaviour
     {
         CurrentMana = MaxMana;
         // Discard
-        DiscardHand();
+        DiscardHand( true );
         // Draw
         DrawCards(CardDrawAmount);
 
@@ -161,19 +169,27 @@ public class PlayerManager : MonoBehaviour
 
     }
 
-    public void DiscardHand()
+    public void DiscardHand( bool keepRetained = false )
     {
-        while(playerHand.Count > 0)
+        int handSize = playerHand.Count;
+        for( int i = handSize-1; i >= 0; i-- )
         {
-            DiscardAt(0, true);
+            DiscardAt(i, true, keepRetained);
         }
 
         Debug.Log("DiscardHand - Deck: " + playerDrawDeck.Count + " Discard: " + playerDiscardDeck.Count);
     }
 
-    void DiscardAt(int num, bool discardingHand = false)
+    void DiscardAt(int num, bool discardingHand = false, bool keepRetained = false)
     {
         CardGO cardGO = playerHand[num];
+
+        // Only retain cards if they are unspent.
+        if(cardGO.ActionSpent == false && cardGO.CardData.IsRetained == true && keepRetained == true)
+        {
+            return;
+        }
+
         playerHand.RemoveAt(num);
 
         if(cardGO.IsTemporary == false)
@@ -257,14 +273,16 @@ public class PlayerManager : MonoBehaviour
             onPlayerHandCountChanged();
     }
 
-    public void DrawCards( int num )
+    public List<CardGO> DrawCards( int num )
     {
+        List<CardGO> newCards = new List<CardGO>();
+
         for(int i = 0; i < num; i++)
         {
             if(PlayerHandParent.transform.childCount >= 10)
             {
                 Debug.Log("Hand is full!");
-                return;
+                return newCards;
             }
 
             if(playerDrawDeck.Count <= 0)
@@ -277,7 +295,7 @@ public class PlayerManager : MonoBehaviour
                     if(onPlayerHandCountChanged != null)
                         onPlayerHandCountChanged();
 
-                    return;
+                    return newCards;
                 }
             }
 
@@ -302,6 +320,8 @@ public class PlayerManager : MonoBehaviour
 
         if(onPlayerHandCountChanged != null)
             onPlayerHandCountChanged();
+
+        return newCards;
     }
 
     public void TakeQuestOverflowDamage()

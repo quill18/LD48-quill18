@@ -186,7 +186,7 @@ public static class CardDataLibrary{
         GainablePlayerCards.Add( cd );
 
         cd = new CardData(
-            1,
+            5,
             "Acquire Startup", 
             "Discard Hand: Solve one random task.", 
             new SUIT[] { }, 
@@ -199,37 +199,51 @@ public static class CardDataLibrary{
         GainablePlayerCards.Add( cd );
 
         cd = new CardData(
-            1,
-            "Automate Task", 
-            "Discard: Generate 1 Workforce.", 
-            new SUIT[] {SUIT.Engineering}, 
-            null,
-            null
-        );
-        GainablePlayerCards.Add( cd );
-
-        cd = new CardData(
-            1,
-            "New Hires", 
-            "Discard: Generate 1 Workforce.", 
-            new SUIT[] {SUIT.Labour}, 
-            null,
-            null
-        );
-        GainablePlayerCards.Add( cd );
-
-        cd = new CardData(
-            1,
-            "", 
-            "Retained.  Discard: ", 
+            5,
+            "Super Capacitors", 
+            "Retained.  Discard: Add 2 Temporary Power Cards", 
             new SUIT[] {SUIT.Science}, 
             null,
-            null
+            (cardGO) => { 
+                cardGO.Discard();
+                PlayerManager.Instance.CreateTemporaryCard( PowerCard ); 
+                PlayerManager.Instance.CreateTemporaryCard( PowerCard );                 
+            }
         );
+        cd.IsRetained = true;
+        GainablePlayerCards.Add( cd );
+
+        cd = new CardData(
+            5,
+            "Temporary Hires", 
+            "Retained. 5 Morale: Add 2 Workforce", 
+            new SUIT[] {SUIT.Labour}, 
+            (cgo) => { return PlayerManager.Instance.CurrentHitpoints > 5; }, 
+            (cardGO) => { 
+                PlayerManager.Instance.CurrentHitpoints -= 5;
+                PlayerManager.Instance.CurrentMana += 2;
+            }
+        );
+        cd.IsRetained = true;
         GainablePlayerCards.Add( cd );
 
 
         cd = new CardData(
+            1,
+            "Contingency Plan", 
+            "Retained. 2 Workforce: Draw 2 Cards", 
+            new SUIT[] {SUIT.Labour}, 
+            (cgo) => { return PlayerManager.Instance.CurrentMana >= 2; }, 
+            (cardGO) => { 
+                PlayerManager.Instance.CurrentMana -= 2;
+                PlayerManager.Instance.DrawCards(2);
+            }
+        );
+        cd.IsRetained = true;
+        GainablePlayerCards.Add( cd );
+
+
+        /*cd = new CardData(
             10,
             "Perpetuate Motion", 
             "While in hand, power costs are decreased by 1", 
@@ -237,25 +251,39 @@ public static class CardDataLibrary{
             null,
             null
         );
-        GainablePlayerCards.Add( cd );
+        GainablePlayerCards.Add( cd );*/
 
         cd = new CardData(
             1,
-            "", 
-            "Gain +2 Workforce next shift", 
-            new SUIT[] {SUIT.Science}, 
+            "Automate Workforce", 
+            "Discard: Draw a card, if card is Engineering, gain 2 Workforce", 
+            new SUIT[] {SUIT.Labour}, 
             null,
-            null
+            (cardGO) => {
+                cardGO.Discard();
+                List<CardGO> newCards = PlayerManager.Instance.DrawCards(1);
+                if(newCards.Count > 0 && newCards[0].CardData.HasSuit(SUIT.Engineering, null))
+                {
+                    PlayerManager.Instance.CurrentMana += 2;
+                }
+            }
         );
         GainablePlayerCards.Add( cd );
 
         cd = new CardData(
             1,
-            "", 
-            "Discard: Draw a card, if card is Labour, gain Workforce/Morale", 
+            "Hiring Surge", 
+            "Discard: Draw a card, if card is Labour, draw one more.", 
             new SUIT[] {SUIT.Labour}, 
             null,
-            null
+            (cardGO) => {
+                cardGO.Discard();
+                List<CardGO> newCards = PlayerManager.Instance.DrawCards(1);
+                if(newCards.Count > 0 && newCards[0].CardData.HasSuit(SUIT.Labour, null))
+                {
+                    PlayerManager.Instance.DrawCards(1);
+                }
+            }
         );
         GainablePlayerCards.Add( cd );
 
@@ -284,7 +312,7 @@ public static class CardDataLibrary{
 
 
         cd = new CardData(
-            1,
+            5,
             "Interdepartmental Synergy", 
             "3 Workforce: This card becomes Science, Engineering, and Labour", 
             new SUIT[] {  }, 
@@ -301,7 +329,7 @@ public static class CardDataLibrary{
             "Unstable Battery", 
             "Add Power to a random card in hand.", 
             new SUIT[] {  }, 
-            null,  //(cgo) => { return PlayerManager.Instance.CurrentMana >= 3; }, 
+            null,
             (cgo) => { AddSuit(RandomCardInHand(), SUIT.Power);  }
         );
         GainablePlayerCards.Add( cd );
