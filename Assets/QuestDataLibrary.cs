@@ -397,7 +397,7 @@ public static class QuestDataLibrary
             1,
             "Out of snacks!",
             "Lose 1 Morale at beginning of shift until restocked.",
-            new SUIT[] { SUIT.Labour }
+            new SUIT[] { SUIT.Labour, SUIT.Labour }
         );
         qd.onShiftEnd += (cardGO) => { PlayerManager.Instance.CurrentHitpoints -= 1; };
         SurfaceQuestData.Add(qd);
@@ -407,7 +407,7 @@ public static class QuestDataLibrary
             1,
             "Rat Infestation",
             "Lose 1 Morale every time you play a card. Break out the flamethrowers!",
-            new SUIT[] { SUIT.Science }
+            new SUIT[] { SUIT.Science, SUIT.Science }
         );
 
         PlayerManager.CardPlayedDelegate d = (cardGO) => { DecreaseMorale(1); };
@@ -418,8 +418,8 @@ public static class QuestDataLibrary
         /////////////////////////////////////////////////////////////////////////////////////////
         qd = new QuestData(
             1,
-            "Loose Bolts",
-            "All tasks cost +1 Energy. Get someone with a wrench in there!",
+            "Gremlins in the System",
+            "All tasks cost +1 Power (including this one).",
             new SUIT[] { SUIT.Engineering }
         );
         qd.onEnter += (questGO) => { if(PlayerManager.Instance != null) {PlayerManager.Instance.AddExtraSuit(SUIT.Power);}};
@@ -431,7 +431,7 @@ public static class QuestDataLibrary
             1,
             "Computer Virus",
             "Draw one fewer card per shift.",
-            new SUIT[] { SUIT.Science }
+            new SUIT[] { SUIT.Science, SUIT.Science }
         );
         qd.onEnter += (cardGO) => { PlayerManager.Instance.CardDrawAmount--; };
         qd.onExit += (cardGO) => { if(PlayerManager.Instance != null) { PlayerManager.Instance.CardDrawAmount++;} };
@@ -441,9 +441,9 @@ public static class QuestDataLibrary
         /////////////////////////////////////////////////////////////////////////////////////////
         qd = new QuestData(
             1,
-            "Human Virus",
+            "QUILLVID-18 Outbreak",
             "-1 Workforce per shift.",
-            new SUIT[] { SUIT.Labour }
+            new SUIT[] { SUIT.Labour, SUIT.Labour }
         );
         qd.onEnter += (cardGO) => { PlayerManager.Instance.MaxMana--; };
         qd.onExit += (cardGO) => { if(PlayerManager.Instance != null) { PlayerManager.Instance.MaxMana++;} };
@@ -467,8 +467,8 @@ public static class QuestDataLibrary
             "-1 Workforce per Shift, but gain 5 morale when completed",
             new SUIT[] { SUIT.Labour, SUIT.Labour }
         );
-        qd.onEnter += (cardGO) => { PlayerManager.Instance.MaxMana++; };
-        qd.onExit += (cardGO) => { if(PlayerManager.Instance != null) { PlayerManager.Instance.MaxMana--;} };
+        qd.onEnter += (cardGO) => { PlayerManager.Instance.MaxMana--; };
+        qd.onExit += (cardGO) => { if(PlayerManager.Instance != null) { PlayerManager.Instance.MaxMana++;} };
         qd.onSuccess += (cardGO) => { PlayerManager.Instance.CurrentHitpoints += 5; };
         SurfaceQuestData.Add(qd);
 
@@ -490,7 +490,7 @@ public static class QuestDataLibrary
             4,
             "Cracked Drill Shaft",
             "Draw one fewer card per shift.",
-            new SUIT[] { SUIT.Engineering }
+            new SUIT[] { SUIT.Engineering, SUIT.Engineering }
         );
         qd.onEnter += (cardGO) => { PlayerManager.Instance.CardDrawAmount--; };
         qd.onExit += (cardGO) => { if(PlayerManager.Instance != null) { PlayerManager.Instance.CardDrawAmount++;} };

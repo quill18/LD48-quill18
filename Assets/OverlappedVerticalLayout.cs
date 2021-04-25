@@ -68,6 +68,11 @@ public class OverlappedVerticalLayout : MonoBehaviour
         {
             Transform c = transform.GetChild(i);
             c.GetComponent<CardGO>()?.StopHover();
+        }
+
+        for(int i = 0; i < numChildren; i++)
+        {
+            Transform c = transform.GetChild(i);
             c.localPosition = new Vector3(
                 0,
                 overlappedChildHeight * ( -numChildren/2.0f + (numChildren - i - 1) ) + overlappedChildHeight/2.0f,

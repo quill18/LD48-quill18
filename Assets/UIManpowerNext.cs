@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class UIManpowerText : MonoBehaviour
+public class UIManpowerNext : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
@@ -16,7 +16,6 @@ public class UIManpowerText : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //text.text = "Workforce: " + PlayerManager.Instance.CurrentMana.ToString() + "\n(Next Shift: " + PlayerManager.Instance.MaxMana.ToString() + ")";
-        text.text = PlayerManager.Instance.CurrentMana.ToString();
+        text.text = "(Next Shift: " + PlayerManager.Instance.MaxMana.ToString() + ")";
     }
 }

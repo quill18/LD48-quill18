@@ -53,6 +53,31 @@ public static class CardDataLibrary{
 
         cd = new CardData(
             1,
+            "Basic Research", 
+            "1 Workforce: Draw Card", 
+            new SUIT[] {SUIT.Science}, 
+            (cgo) => { return PlayerManager.Instance.CurrentMana >= 1; }, 
+            (cgo) => { 
+                PlayerManager.Instance.CurrentMana -= 1; 
+                PlayerManager.Instance.DrawCards(1); } );
+        GainablePlayerCards.Add( cd );
+        StartingPlayerCards.Add ( cd );
+
+        cd = new CardData(
+            1,
+            "Power", 
+            "", 
+            new SUIT[] {SUIT.Power}, 
+            null, 
+            null );
+        PowerCard = cd;
+        StartingPlayerCards.Add ( cd );
+        StartingPlayerCards.Add ( cd );
+        StartingPlayerCards.Add ( cd );
+
+
+        cd = new CardData(
+            1,
             "Creative Workaround", 
             "Ignore blockers until you solve a task.", 
             new SUIT[] {SUIT.Engineering}, 
@@ -64,20 +89,8 @@ public static class CardDataLibrary{
 
         cd = new CardData(
             1,
-            "Basic Research", 
-            "1MP: Draw Card", 
-            new SUIT[] {SUIT.Science}, 
-            (cgo) => { return PlayerManager.Instance.CurrentMana >= 1; }, 
-            (cgo) => { 
-                PlayerManager.Instance.CurrentMana -= 1; 
-                PlayerManager.Instance.DrawCards(1); } );
-        GainablePlayerCards.Add( cd );
-        StartingPlayerCards.Add ( cd );
-
-        cd = new CardData(
-            1,
             "Human Experiments", 
-            "Discard, 5 Morale: Gain 2 Workforce", 
+            "5 Morale: Gain 2 Workforce", 
             new SUIT[] {SUIT.Science}, 
             (cgo) => { return PlayerManager.Instance.CurrentHitpoints > 5; }, 
             (cgo) => { 
@@ -114,7 +127,7 @@ public static class CardDataLibrary{
         cd = new CardData(
             1,
             "Restructuring", 
-            "5 Morale: Discard all Unused Cards, then draw that many cards", 
+            "5 Morale: Discard this and all Unused Cards, then draw that many cards", 
             new SUIT[] {SUIT.Labour}, 
             (cgo) => { return PlayerManager.Instance.CurrentHitpoints > 5; }, 
             (cardGO) => { 
@@ -136,18 +149,6 @@ public static class CardDataLibrary{
              }
         );
         GainablePlayerCards.Add( cd );
-        StartingPlayerCards.Add ( cd );
-
-        cd = new CardData(
-            1,
-            "Power", 
-            "", 
-            new SUIT[] {SUIT.Power}, 
-            null, 
-            null );
-        PowerCard = cd;
-        StartingPlayerCards.Add ( cd );
-        StartingPlayerCards.Add ( cd );
         StartingPlayerCards.Add ( cd );
 
         ///////////////////////////////////////////// Non-Starters
@@ -177,7 +178,7 @@ public static class CardDataLibrary{
         cd = new CardData(
             1,
             "Cheap Diplomas", 
-            "2MP: Change all Labour card suits to Science", 
+            "2 Workforce: Change all Labour card suits to Science", 
             new SUIT[] {SUIT.Science}, 
             (cgo) => { return PlayerManager.Instance.CurrentMana >= 2; }, 
             (cgo) => { 
@@ -201,7 +202,7 @@ public static class CardDataLibrary{
         cd = new CardData(
             5,
             "Super Capacitors", 
-            "Retained.  Discard: Add 2 Temporary Power Cards", 
+            "Retained.\nDiscard: Add 2 Temporary Power Cards", 
             new SUIT[] {SUIT.Science}, 
             null,
             (cardGO) => { 
@@ -216,7 +217,7 @@ public static class CardDataLibrary{
         cd = new CardData(
             5,
             "Temporary Hires", 
-            "Retained. 5 Morale: Add 2 Workforce", 
+            "Retained.\n5 Morale: Add 2 Workforce", 
             new SUIT[] {SUIT.Labour}, 
             (cgo) => { return PlayerManager.Instance.CurrentHitpoints > 5; }, 
             (cardGO) => { 
@@ -231,7 +232,7 @@ public static class CardDataLibrary{
         cd = new CardData(
             1,
             "Contingency Plan", 
-            "Retained. 2 Workforce: Draw 2 Cards", 
+            "Retained.\n2 Workforce: Draw 2 Cards", 
             new SUIT[] {SUIT.Labour}, 
             (cgo) => { return PlayerManager.Instance.CurrentMana >= 2; }, 
             (cardGO) => { 
@@ -338,12 +339,12 @@ public static class CardDataLibrary{
         cd = new CardData(
             1,
             "Massage Chairs", 
-            "Discard: Gain a Workforce for each Engineering card in hand.", 
+            "Gain a Morale for each Engineering card in hand.", 
             new SUIT[] { SUIT.Labour }, 
             null,
             (cgo) => { 
-                cgo.Discard();
-                PlayerManager.Instance.CurrentMana += NumCardsWithSuit(SUIT.Engineering);
+                //cgo.Discard();
+                PlayerManager.Instance.CurrentHitpoints += NumCardsWithSuit(SUIT.Engineering);
             } 
         );
         GainablePlayerCards.Add( cd );
@@ -483,7 +484,7 @@ public static class CardDataLibrary{
         List<CardGO> cardsToDiscard = new List<CardGO>();
         foreach(CardGO card in PlayerManager.Instance.playerHand)
         {
-            if(card != activeCard && card.ActionSpent == false)
+            if(/*card != activeCard &&*/ card.ActionSpent == false)
             {
                 cardsToDiscard.Add(card);
             }

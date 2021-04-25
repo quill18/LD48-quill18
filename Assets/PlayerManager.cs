@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.UI;
+using TMPro;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -23,6 +24,12 @@ public class PlayerManager : MonoBehaviour
         NewTurn();
     }
 
+    public void ForceUpdateQuests()
+    {
+        if(onPlayerHandCountChanged != null)
+            onPlayerHandCountChanged();
+    }
+
     private void OnDestroy() {
         _Instance = null;
     }
@@ -40,15 +47,39 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    public int CurrentHitpoints {get; set;}
+    public GameObject MoraleTextFloaterPrefab;
+    public Transform MoraleTextFloaterParent;
+
+    private int _CurrentHitpoints;
+    public int CurrentHitpoints {
+        get {return _CurrentHitpoints;}
+        set {
+            if( value < _CurrentHitpoints )
+            {
+                DoMoraleFloater( _CurrentHitpoints - value );
+            }
+            _CurrentHitpoints = value;
+            if(_CurrentHitpoints <= 0)
+            {
+                GameManager.Instance.GameOver();
+            }
+        }
+    }
     public int MaxHitpoints;
+
+    void DoMoraleFloater( int value )
+    {
+        GameObject go = Instantiate(MoraleTextFloaterPrefab, MoraleTextFloaterParent);
+        go.transform.Translate( Random.insideUnitCircle * 10f );
+        go.GetComponent<TextMeshProUGUI>().text = "-" + value.ToString();
+    }
 
     public int CurrentMana {get; set;}
     public int MaxMana;
 
     List<CardData> playerDeck;  // The cards in a player's deck in total
-    List<CardData> playerDrawDeck;
-    List<CardData> playerDiscardDeck;
+    public List<CardData> playerDrawDeck;
+    public List<CardData> playerDiscardDeck;
     public List<CardGO> playerHand;
 
     public GameObject CardGOPrefab;
@@ -57,7 +88,17 @@ public class PlayerManager : MonoBehaviour
 
     public int CardDrawAmount = 5;
 
-    public int IgnoreNextBlocker = 0;
+    private int _IgnoreNextBlocker = 0;
+    public int IgnoreNextBlocker { 
+        get {
+            return _IgnoreNextBlocker;
+        }
+        set {
+            _IgnoreNextBlocker = value;
+        if(onPlayerHandCountChanged != null)
+            onPlayerHandCountChanged();
+        }
+    }
 
     List<SUIT> extraSuitCost;   // An extra cost for all quests
     List<SUIT> suitDiscount;   // An extra cost for all quests
@@ -71,6 +112,12 @@ public class PlayerManager : MonoBehaviour
 
     public delegate void CardPlayedDelegate(CardGO cardGO);
     public event CardPlayedDelegate onCardPlayed;
+
+    public void AddToDiscard( CardData cardData )
+    {
+        Debug.Log("AddToDiscard");
+        playerDiscardDeck.Add( cardData );
+    }
 
     public void AddExtraSuit( SUIT s )
     {
@@ -142,8 +189,15 @@ public class PlayerManager : MonoBehaviour
         ShuffleDrawDeck();
     }
 
+    bool initialDrawDone = false;
+
     void ShuffleDrawDeck()
     {
+        if(initialDrawDone == false)
+        {
+            return;
+        }
+
         List<CardData> newPlayerDrawDeck = new List<CardData>();
 
         while(playerDrawDeck.Count > 0)
@@ -164,6 +218,12 @@ public class PlayerManager : MonoBehaviour
         DiscardHand( true );
         // Draw
         DrawCards(CardDrawAmount);
+
+        if(initialDrawDone == false)
+        {
+            initialDrawDone = true;
+            ShuffleDrawDeck();
+        }
 
         Debug.Log("NewTurn - Deck: " + playerDrawDeck.Count + " Discard: " + playerDiscardDeck.Count);
 
@@ -255,7 +315,7 @@ public class PlayerManager : MonoBehaviour
 
         // Instantiate a new CardGO and link to the data
         GameObject pf = CardGOPrefab;
-        if(cd.suits[0] == SUIT.Power)
+        if(cd.suits.Length > 0 && cd.suits[0] == SUIT.Power)
             pf = CardGOPrefabPower; // use the power card art
 
         GameObject cardGO = Instantiate(pf, PlayerHandParent);
@@ -263,7 +323,10 @@ public class PlayerManager : MonoBehaviour
         cardGO.GetComponent<CardGO>().IsTemporary = true;
 
         Image img = cardGO.GetComponent<Image>();
-        img.color = CardTints[ (int)cd.suits[0] ];  // Tint the card frame based on icon.
+        if(cd.suits.Length > 0)
+        {
+            img.color = CardTints[ (int)cd.suits[0] ];  // Tint the card frame based on icon.
+        }
 
         cardGO.GetComponent<CardGO>().CardData = cd;
         cardGO.GetComponent<CardGO>().UpdateCachedSuits();
@@ -299,29 +362,41 @@ public class PlayerManager : MonoBehaviour
                 }
             }
 
-            CardData cd = playerDrawDeck[0];
-            playerDrawDeck.RemoveAt(0);
-
-            // Instantiate a new CardGO and link to the data
-            GameObject pf = CardGOPrefab;
-            if(cd.suits[0] == SUIT.Power)
-                pf = CardGOPrefabPower; // use the power card art
-
-            GameObject cardGO = Instantiate(pf, PlayerHandParent);
-
-            //Image img = cardGO.transform.Find("Frame").GetComponent<Image>();
-            Image img = cardGO.transform.GetComponent<Image>();
-            img.color = CardTints[ (int)cd.suits[0] ];  // Tint the card frame based on icon.
-
-            cardGO.GetComponent<CardGO>().CardData = cd;
-            cardGO.GetComponent<CardGO>().UpdateCachedSuits();
-            playerHand.Add(cardGO.GetComponent<CardGO>());
+            CardGO cardGO = GenerateCardGOFromDeck(playerDrawDeck);
+            cardGO.transform.SetParent(PlayerHandParent);
+            cardGO.transform.localScale = Vector3.one;
+            playerHand.Add(cardGO);
         }
 
         if(onPlayerHandCountChanged != null)
             onPlayerHandCountChanged();
 
         return newCards;
+    }
+
+    public CardGO GenerateCardGOFromDeck( List<CardData> deck )
+    {
+            CardData cd = deck[0];
+            deck.RemoveAt(0);
+
+            // Instantiate a new CardGO and link to the data
+            GameObject pf = CardGOPrefab;
+            if(cd.suits != null && cd.suits.Length > 0 && cd.suits[0] == SUIT.Power)
+                pf = CardGOPrefabPower; // use the power card art
+
+            CardGO cardGO = Instantiate(pf).GetComponent<CardGO>();
+
+            //Image img = cardGO.transform.Find("Frame").GetComponent<Image>();
+            Image img = cardGO.transform.GetComponent<Image>();
+            if(cd.suits != null && cd.suits.Length > 0)
+            {
+                img.color = CardTints[ (int)cd.suits[0] ];  // Tint the card frame based on icon.
+            }
+
+            cardGO.CardData = cd;
+            cardGO.UpdateCachedSuits();
+
+            return cardGO;
     }
 
     public void TakeQuestOverflowDamage()
@@ -386,7 +461,7 @@ public class PlayerManager : MonoBehaviour
         Dictionary<SUIT, int> suitsRequired = new Dictionary<SUIT, int>();
 
         // If this quest is not a blocker, but there is a blocker quest in play, return false.
-        if(ignoreBlockers == false && questData.isQuestBlocker == false)
+        if(IgnoreNextBlocker <= 0 && ignoreBlockers == false && questData.isQuestBlocker == false)
         {
             if( questGO.QuestIsStackBlocked() )
             {

@@ -35,6 +35,11 @@ public class GameManager : MonoBehaviour
     public QuestContainer SurfaceQuestContainer;
     public QuestContainer DrillQuestContainer;
 
+    public NewCardSelector NewCardSelector;
+
+    public GameObject LoseScreen;
+    public GameObject VictoryScreen;
+
     // Update is called once per frame
     void Update()
     {
@@ -62,10 +67,16 @@ public class GameManager : MonoBehaviour
     {
         // Update scores, trigger visuals, etc...
 
+        if(CurrentLevel > 0)
+        {
+            EndShift();
+        }
+
         CurrentLevel++;
 
         if(onNewLevel != null)
             onNewLevel();
+
     }
 
     public void EndShift()
@@ -88,5 +99,32 @@ public class GameManager : MonoBehaviour
 
     }
 
+    public void CheckForEndOfLevel()
+    {
+        Debug.Log("CheckForEndOfLevel: " + DrillQuestContainer.transform.childCount);
+        if(DrillQuestContainer.transform.childCount == 0)
+        {
+            if(CurrentLevel == 18)
+            {
+                Victory();
+                return;
+            }
+
+            NewCardSelector.Show();
+
+            // End of level!
+            //NewLevel();
+        }
+    }
+
+    public void GameOver()
+    {
+        LoseScreen.SetActive(true);
+    }
+
+    public void Victory()
+    {
+        VictoryScreen.SetActive(true);
+    }
 
 }

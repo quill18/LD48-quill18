@@ -104,5 +104,7 @@ public class QuestContainer : MonoBehaviour
         }
 
         questGO.QuestData = qd;
+
+        PlayerManager.Instance.ForceUpdateQuests();
     }
 }

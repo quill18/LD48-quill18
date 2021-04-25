@@ -16,6 +16,7 @@ public class UIMoraleText : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        text.text = "Morale: " + PlayerManager.Instance.CurrentHitpoints.ToString();
+        //text.text = "Morale: " + PlayerManager.Instance.CurrentHitpoints.ToString();
+        text.text = PlayerManager.Instance.CurrentHitpoints.ToString();
     }
 }

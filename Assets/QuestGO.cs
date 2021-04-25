@@ -135,8 +135,10 @@ public class QuestGO : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler
 
         PlayerManager.Instance.IgnoreNextBlocker = 0;
 
+        gameObject.transform.SetParent(null); // IM BATMAN
         Destroy(gameObject);
 
+        GameManager.Instance.CheckForEndOfLevel();
     }
 
     public void OnPointerEnter(PointerEventData pointerEventData)

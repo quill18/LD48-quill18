@@ -35,6 +35,8 @@ public class CardGO : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
 
     public bool IsTemporary = false;
 
+    [System.NonSerialized]
+    public bool IsCardPicking = false;
 
     public void Discard()
     {
@@ -44,6 +46,12 @@ public class CardGO : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
     public void OnPointerClick(PointerEventData pointerEventData)
     {
         Debug.Log("CardGO " + gameObject.name + " was clicked.");
+
+        if(IsCardPicking)
+        {
+            DoCardPick();            
+            return;
+        }
 
         if(ActionSpent == true)
         {
@@ -64,21 +72,44 @@ public class CardGO : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
         UpdateCardInfo();
     }
 
+    void DoCardPick()
+    {
+        // This card was selected during the end of level card-adder phase
+        PlayerManager.Instance.AddToDiscard(CardData);
+
+        GameObject.FindObjectOfType<NewCardSelector>().Hide();
+        GameManager.Instance.NewLevel();
+    }
+
     public void OnPointerEnter(PointerEventData pointerEventData)
     {
         // TODO: Offset the card slightly?  Embiggen it?
-        origSiblingIndex = transform.GetSiblingIndex();
-        transform.SetSiblingIndex( transform.parent.childCount - 1 );
-        transform.position = new Vector3(
-            16,
-            transform.position.y,
-            transform.position.z
-        );
+        if(IsCardPicking)
+        {
+            // Embiggen
+            transform.localScale = Vector3.one * 1.1f;
+        }
+        else
+        {
+            origSiblingIndex = transform.GetSiblingIndex();
+            transform.SetSiblingIndex( transform.parent.childCount - 1 );
+            transform.position = new Vector3(
+                16,
+                transform.position.y,
+                transform.position.z
+            );
+        }
     }
 
     public void OnPointerExit(PointerEventData pointerEventData)
     {
-        StopHover();
+        if(IsCardPicking)
+        {
+            transform.localScale = Vector3.one;
+        }
+        else {
+            StopHover();
+        }
     }
 
     public void StopHover()
@@ -106,7 +137,7 @@ public class CardGO : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
         }
 
         txtTitle.text = ActionSpent ? "USED" : CardData.Name;
-        txtDescription.text = ActionSpent ? "USED" : CardData.Description + ( IsTemporary ? " *Temporary*" : "" );
+        txtDescription.text = ( IsTemporary ? "*Temporary*\n" : "" ) + (ActionSpent ? "USED" : CardData.Description);
         txtSuits.text = CardData.GetSuitString(cachedSuits.ToArray());
     }
 }
