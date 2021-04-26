@@ -57,6 +57,7 @@ public class PlayerManager : MonoBehaviour
             if( value < _CurrentHitpoints )
             {
                 DoMoraleFloater( _CurrentHitpoints - value );
+                TutorialManager.Instance.Show( TutorialManager.Instance.TutorialMorale );
             }
             _CurrentHitpoints = value;
             if(_CurrentHitpoints <= 0)
@@ -74,7 +75,22 @@ public class PlayerManager : MonoBehaviour
         go.GetComponent<TextMeshProUGUI>().text = "-" + value.ToString();
     }
 
-    public int CurrentMana {get; set;}
+    private int _CurrentMana;
+    public int CurrentMana {
+        get { return _CurrentMana; }
+        set
+        {
+            _CurrentMana = value;
+
+            if(_CurrentMana < 0)
+                _CurrentMana = 0;
+
+            if(_CurrentMana <= 0)
+            {
+                TutorialManager.Instance.Show( TutorialManager.Instance.TutorialWorkforce );
+            }
+        }
+        }
     public int MaxMana;
 
     List<CardData> playerDeck;  // The cards in a player's deck in total
@@ -366,6 +382,7 @@ public class PlayerManager : MonoBehaviour
             cardGO.transform.SetParent(PlayerHandParent);
             cardGO.transform.localScale = Vector3.one;
             playerHand.Add(cardGO);
+            newCards.Add(cardGO);
         }
 
         if(onPlayerHandCountChanged != null)

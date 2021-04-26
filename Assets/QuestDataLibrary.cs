@@ -7,6 +7,7 @@ using UnityEngine;
 public static class QuestDataLibrary
 {
     public static List<QuestData> SurfaceQuestData;
+    public static List<QuestData> ForcedFirstQuest;
     public static List<QuestData> DrillQuestData_Dirt;
     public static List<QuestData> DrillQuestData_Treasure;
 
@@ -224,7 +225,7 @@ public static class QuestDataLibrary
         qd = new QuestData(
             1,
             "Alexandrite",
-            "June",
+            "",
             new SUIT[] { SUIT.Engineering, SUIT.Power }
         );
         DrillQuestData_Treasure.Add(qd);
@@ -242,7 +243,7 @@ public static class QuestDataLibrary
         qd = new QuestData(
             1,
             "Amethyst",
-            "February",
+            "",
             new SUIT[] { SUIT.Science, SUIT.Power }
         );
         DrillQuestData_Treasure.Add(qd);
@@ -260,7 +261,7 @@ public static class QuestDataLibrary
         qd = new QuestData(
             1,
             "Garnet",
-            "January",
+            "",
             new SUIT[] { SUIT.Labour, SUIT.Power }
         );
         DrillQuestData_Treasure.Add(qd);
@@ -270,7 +271,7 @@ public static class QuestDataLibrary
         qd = new QuestData(
             1,
             "Aquamarine",
-            "March",
+            "",
             new SUIT[] { SUIT.Science, SUIT.Engineering, SUIT.Power }
         );
         DrillQuestData_Treasure.Add(qd);
@@ -279,7 +280,7 @@ public static class QuestDataLibrary
         qd = new QuestData(
             1,
             "Diamond",
-            "April",
+            "Birthstone for the best month!",
             new SUIT[] { SUIT.Science, SUIT.Labour, SUIT.Power }
         );
         DrillQuestData_Treasure.Add(qd);
@@ -288,7 +289,7 @@ public static class QuestDataLibrary
         qd = new QuestData(
             1,
             "Ruby",
-            "July",
+            "",
             new SUIT[] { SUIT.Engineering, SUIT.Labour, SUIT.Power }
         );
         DrillQuestData_Treasure.Add(qd);
@@ -298,7 +299,7 @@ public static class QuestDataLibrary
         qd = new QuestData(
             1,
             "Emerald",
-            "May",
+            "",
             new SUIT[] { SUIT.Science, SUIT.Power, SUIT.Power }
         );
         DrillQuestData_Treasure.Add(qd);
@@ -307,7 +308,7 @@ public static class QuestDataLibrary
         qd = new QuestData(
             1,
             "Peridot",
-            "August",
+            "",
             new SUIT[] { SUIT.Engineering, SUIT.Power, SUIT.Power }
         );
         DrillQuestData_Treasure.Add(qd);
@@ -316,7 +317,7 @@ public static class QuestDataLibrary
         qd = new QuestData(
             1,
             "Sapphire",
-            "September",
+            "",
             new SUIT[] { SUIT.Labour, SUIT.Power, SUIT.Power }
         );
         DrillQuestData_Treasure.Add(qd);
@@ -326,7 +327,7 @@ public static class QuestDataLibrary
         qd = new QuestData(
             1,
             "Tourmaline",
-            "October",
+            "",
             new SUIT[] { SUIT.Science, SUIT.Engineering, SUIT.Power, SUIT.Power }
         );
         DrillQuestData_Treasure.Add(qd);
@@ -335,7 +336,7 @@ public static class QuestDataLibrary
         qd = new QuestData(
             1,
             "Topaz",
-            "November",
+            "",
             new SUIT[] { SUIT.Science, SUIT.Labour, SUIT.Power, SUIT.Power }
         );
         DrillQuestData_Treasure.Add(qd);
@@ -343,7 +344,7 @@ public static class QuestDataLibrary
         qd = new QuestData(
             1,
             "Tanzanite",
-            "December",
+            "",
             new SUIT[] { SUIT.Labour, SUIT.Engineering, SUIT.Power, SUIT.Power }
         );
         DrillQuestData_Treasure.Add(qd);
@@ -363,7 +364,7 @@ public static class QuestDataLibrary
         qd = new QuestData(
             1,
             "Unobtanium",
-            "",
+            "Surprisingly obtainable.",
             new SUIT[] { SUIT.Science, SUIT.Labour, SUIT.Power, SUIT.Power, SUIT.Power }
         );
         DrillQuestData_Treasure.Add(qd);
@@ -372,7 +373,7 @@ public static class QuestDataLibrary
         qd = new QuestData(
             18,
             "Whiskichocolatium",
-            "",
+            "FINAL LEVEL!",
             new SUIT[] { SUIT.Labour, SUIT.Engineering, SUIT.Power, SUIT.Power, SUIT.Power }
         );
         DrillQuestData_Treasure.Add(qd);
@@ -390,6 +391,7 @@ public static class QuestDataLibrary
         // The Left quests 
 
         SurfaceQuestData = new List<QuestData>();
+        ForcedFirstQuest = new List<QuestData>();
         QuestData qd;
 
         /////////////////////////////////////////////////////////////////////////////////////////
@@ -419,7 +421,7 @@ public static class QuestDataLibrary
         qd = new QuestData(
             1,
             "Gremlins in the System",
-            "All tasks cost +1 Power (including this one).",
+            "All tasks cost +1 Power. (Including this one.)",
             new SUIT[] { SUIT.Engineering }
         );
         qd.onEnter += (questGO) => { if(PlayerManager.Instance != null) {PlayerManager.Instance.AddExtraSuit(SUIT.Power);}};
@@ -459,6 +461,7 @@ public static class QuestDataLibrary
         );
         qd.isQuestBlocker = true;
         SurfaceQuestData.Add(qd);
+        ForcedFirstQuest.Add(qd);
 
         /////////////////////////////////////////////////////////////////////////////////////////
         qd = new QuestData(
@@ -477,7 +480,7 @@ public static class QuestDataLibrary
         qd = new QuestData(
             3,
             "Rounding Error",
-            "All tasks cost +1 Science.",
+            "All tasks cost +1 Science. (Including this one.)",
             new SUIT[] { SUIT.Engineering }
         );
         qd.onEnter += (questGO) => { if(PlayerManager.Instance != null) {PlayerManager.Instance.AddExtraSuit(SUIT.Science);}};
@@ -501,7 +504,7 @@ public static class QuestDataLibrary
         qd = new QuestData(
             4,
             "Out of Duct Tape",
-            "All tasks cost +1 Engineering.",
+            "All tasks cost +1 Engineering. (Including this one.)",
             new SUIT[] { SUIT.Engineering }
         );
         qd.onEnter += (questGO) => { if(PlayerManager.Instance != null) {PlayerManager.Instance.AddExtraSuit(SUIT.Engineering);}};
@@ -524,8 +527,8 @@ public static class QuestDataLibrary
         qd = new QuestData(
             5,
             "Worker Strike",
-            "Unable to complete other quests.",
-            new SUIT[] { SUIT.Labour, SUIT.Labour, SUIT.Labour }
+            "Unable to complete other quests (until you strike the workers with a cattle prod.)",
+            new SUIT[] { SUIT.Labour, SUIT.Labour, SUIT.Power }
         );
         qd.isQuestBlocker = true;
         SurfaceQuestData.Add(qd);
@@ -548,7 +551,7 @@ public static class QuestDataLibrary
         qd = new QuestData(
             6,
             "Labour Union",
-            "All tasks cost +1 Labour.",
+            "All tasks cost +1 Labour. (Including this one.)",
             new SUIT[] { SUIT.Engineering }
         );
         qd.onEnter += (questGO) => { if(PlayerManager.Instance != null) {PlayerManager.Instance.AddExtraSuit(SUIT.Labour);}};
@@ -595,12 +598,12 @@ public static class QuestDataLibrary
         qd = new QuestData(
             10,
             "Comet Sighted",
-            "Lose 5 morale when you play a card.",
+            "Lose 2 morale when you play a card.",
             new SUIT[] { SUIT.Science, SUIT.Science, SUIT.Science }
         );
-        PlayerManager.CardPlayedDelegate d5 = (cardGO) => { DecreaseMorale(5); };
-        qd.onEnter += (questGO) => { if(PlayerManager.Instance != null) {PlayerManager.Instance.onCardPlayed += d;}};
-        qd.onExit  += (questGO) => { if(PlayerManager.Instance != null) {PlayerManager.Instance.onCardPlayed -= d;}};
+        PlayerManager.CardPlayedDelegate d5 = (cardGO) => { DecreaseMorale(2); };
+        qd.onEnter += (questGO) => { if(PlayerManager.Instance != null) {PlayerManager.Instance.onCardPlayed += d5;}};
+        qd.onExit  += (questGO) => { if(PlayerManager.Instance != null) {PlayerManager.Instance.onCardPlayed -= d5;}};
 
         SurfaceQuestData.Add(qd);
 
@@ -608,10 +611,10 @@ public static class QuestDataLibrary
         qd = new QuestData(
             10,
             "Found the circus!",
-            "Lose 10 morale at beginning of shift.",
+            "Lose 5 morale at beginning of shift.",
             new SUIT[] { SUIT.Engineering, SUIT.Engineering, SUIT.Labour, SUIT.Labour }
         );
-        qd.onShiftEnd += (cardGO) => { PlayerManager.Instance.CurrentHitpoints -= 10; };
+        qd.onShiftEnd += (cardGO) => { PlayerManager.Instance.CurrentHitpoints -= 5; };
         SurfaceQuestData.Add(qd);
 
 

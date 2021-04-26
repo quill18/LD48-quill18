@@ -579,8 +579,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u2665\u2665\u2665\u2660"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: c59d966e99d2fd544a0efa48f2ef10d3, type: 2}
-  m_sharedMaterial: {fileID: -362982183998743927, guid: c59d966e99d2fd544a0efa48f2ef10d3, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 08bc6ba508e8d4248a1c5ff268ed7f9a, type: 2}
+  m_sharedMaterial: {fileID: 3538297943200491011, guid: 08bc6ba508e8d4248a1c5ff268ed7f9a, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

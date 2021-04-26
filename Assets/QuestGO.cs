@@ -139,6 +139,8 @@ public class QuestGO : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler
         Destroy(gameObject);
 
         GameManager.Instance.CheckForEndOfLevel();
+
+        TutorialManager.Instance.Show( TutorialManager.Instance.TutorialDrill );
     }
 
     public void OnPointerEnter(PointerEventData pointerEventData)

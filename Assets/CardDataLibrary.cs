@@ -102,11 +102,11 @@ public static class CardDataLibrary{
         cd = new CardData(
             1,
             "Focus on the Practical", 
-            "2 Workforce: Change all Science card suits to Engineering", 
+            "Change all Science card suits to Engineering", 
             new SUIT[] {SUIT.Science}, 
-            (cgo) => { return PlayerManager.Instance.CurrentMana >= 2; }, 
+            null,
             (cgo) => { 
-                PlayerManager.Instance.CurrentMana -= 2; 
+                //PlayerManager.Instance.CurrentMana -= 2; 
                 ChangeSuits(SUIT.Science, SUIT.Engineering); } );
         GainablePlayerCards.Add( cd );
         StartingPlayerCards.Add ( cd );
@@ -156,11 +156,11 @@ public static class CardDataLibrary{
         cd = new CardData(
             1,
             "Focus on Theory", 
-            "2 Workforce: Change all Engineering card suits to Science", 
+            "Change all Engineering card suits to Science", 
             new SUIT[] {SUIT.Engineering}, 
-            (cgo) => { return PlayerManager.Instance.CurrentMana >= 2; }, 
+            null, //(cgo) => { return PlayerManager.Instance.CurrentMana >= 2; }, 
             (cgo) => { 
-                PlayerManager.Instance.CurrentMana -= 2; 
+                //PlayerManager.Instance.CurrentMana -= 2; 
                 ChangeSuits(SUIT.Engineering, SUIT.Science); } );
         GainablePlayerCards.Add( cd );
 
@@ -202,7 +202,7 @@ public static class CardDataLibrary{
         cd = new CardData(
             5,
             "Super Capacitors", 
-            "Retained.\nDiscard: Add 2 Temporary Power Cards", 
+            "Discard: Add 2 Temporary Power Cards", 
             new SUIT[] {SUIT.Science}, 
             null,
             (cardGO) => { 
@@ -211,7 +211,7 @@ public static class CardDataLibrary{
                 PlayerManager.Instance.CreateTemporaryCard( PowerCard );                 
             }
         );
-        cd.IsRetained = true;
+        //cd.IsRetained = true;
         GainablePlayerCards.Add( cd );
 
         cd = new CardData(
@@ -280,6 +280,7 @@ public static class CardDataLibrary{
             (cardGO) => {
                 cardGO.Discard();
                 List<CardGO> newCards = PlayerManager.Instance.DrawCards(1);
+                //Debug.Log( newCards[0].CardData.Name + " " +  newCards[0].CardData.suits[0]);
                 if(newCards.Count > 0 && newCards[0].CardData.HasSuit(SUIT.Labour, null))
                 {
                     PlayerManager.Instance.DrawCards(1);
@@ -328,10 +329,14 @@ public static class CardDataLibrary{
         cd = new CardData(
             1,
             "Unstable Battery", 
-            "Add Power to a random card in hand.", 
+            "Add 2 Power to a random card in hand.", 
             new SUIT[] {  }, 
             null,
-            (cgo) => { AddSuit(RandomCardInHand(), SUIT.Power);  }
+            (cgo) => { 
+                CardGO c = RandomCardInHand();
+                AddSuit(c, SUIT.Power);  
+                AddSuit(c, SUIT.Power);  
+                }
         );
         GainablePlayerCards.Add( cd );
 
@@ -391,7 +396,7 @@ public static class CardDataLibrary{
         cd = new CardData(
             5,
             "Work Smarter, Not Harder", 
-            "(Actually we just added caffeine to the water coolers.)", 
+            "", 
             new SUIT[] { SUIT.Labour, SUIT.Science }, 
             null,
             null

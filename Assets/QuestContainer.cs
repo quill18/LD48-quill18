@@ -33,6 +33,8 @@ public class QuestContainer : MonoBehaviour
         }
     }
 
+    public GameObject QuestOverflowWarning;
+
     public enum QUESTCLASS { SURFACE, DRILL }
     public QUESTCLASS QuestClass;
 
@@ -69,7 +71,17 @@ public class QuestContainer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(QuestOverflowWarning != null) 
+        {
+            if(transform.childCount >= 4)
+            {
+                QuestOverflowWarning.SetActive(true);
+            }
+            else
+            {
+                QuestOverflowWarning.SetActive(false);
+            }
+        }
     }
 
     public void AddQuest()
@@ -85,10 +97,18 @@ public class QuestContainer : MonoBehaviour
         
         if(QuestClass == QUESTCLASS.SURFACE)
         {
-            List<QuestData> filteredQuests = myQuestPool.Where( 
-                (qd) => { return qd.Level <= GameManager.Instance.CurrentLevel; }  
-                ).ToList();
-            qd = filteredQuests[ Random.Range(0, filteredQuests.Count) ];
+            if(QuestDataLibrary.ForcedFirstQuest.Count > 0)
+            {
+                qd = QuestDataLibrary.ForcedFirstQuest[0];
+                QuestDataLibrary.ForcedFirstQuest.RemoveAt(0);
+            }
+            else
+            {
+                List<QuestData> filteredQuests = myQuestPool.Where( 
+                    (qd) => { return qd.Level <= GameManager.Instance.CurrentLevel; }  
+                    ).ToList();
+                qd = filteredQuests[ Random.Range(0, filteredQuests.Count) ];
+            }
         }
         else
         {
