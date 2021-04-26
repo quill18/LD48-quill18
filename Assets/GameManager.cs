@@ -101,7 +101,7 @@ public class GameManager : MonoBehaviour
 
     public void CheckForEndOfLevel()
     {
-        Debug.Log("CheckForEndOfLevel: " + DrillQuestContainer.transform.childCount);
+        //Debug.Log("CheckForEndOfLevel: " + DrillQuestContainer.transform.childCount);
         if(DrillQuestContainer.transform.childCount == 0)
         {
             if(CurrentLevel == 18)

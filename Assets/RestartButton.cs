@@ -19,9 +19,18 @@ public class RestartButton : MonoBehaviour, IPointerClickHandler
         
     }
 
+    public void OnClick()
+    {
+        Debug.Log("SceneManager.LoadScene");
+        SceneManager.LoadScene( SceneManager.GetActiveScene().buildIndex );
+
+    }
+
     public void OnPointerClick(PointerEventData pointerEventData)
     {
+        Debug.Log("SceneManager.LoadScene");
         SceneManager.LoadScene( SceneManager.GetActiveScene().buildIndex );
+        
     }
 
 

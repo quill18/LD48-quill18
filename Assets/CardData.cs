@@ -52,7 +52,7 @@ public class CardData : CardBase
         if(cardAction == null)
         {
             // We don't have an action
-            Debug.Log("Card has no action.");
+            //Debug.Log("Card has no action.");
             return false;
         }
 
