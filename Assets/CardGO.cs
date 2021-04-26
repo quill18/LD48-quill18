@@ -93,10 +93,10 @@ public class CardGO : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
         {
             origSiblingIndex = transform.GetSiblingIndex();
             transform.SetSiblingIndex( transform.parent.childCount - 1 );
-            transform.position = new Vector3(
+            transform.localPosition = new Vector3(
                 16,
-                transform.position.y,
-                transform.position.z
+                transform.localPosition.y,
+                transform.localPosition.z
             );
         }
     }
@@ -118,10 +118,10 @@ public class CardGO : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
             return;
         transform.SetSiblingIndex( origSiblingIndex );
         origSiblingIndex = -1;
-        transform.position = new Vector3(
+        transform.localPosition = new Vector3(
             0,
-            transform.position.y,
-            transform.position.z
+            transform.localPosition.y,
+            transform.localPosition.z
         );
 
     }
